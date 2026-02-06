@@ -21,10 +21,24 @@ period = st.sidebar.selectbox("Lookback Period", ["1y", "2y", "5y", "10y"], inde
 vol_threshold = st.sidebar.slider("Volatility Alert Threshold (%)", 10, 50, 20)
 
 # --- CACHED DATA FUNCTION (Speeds up the app) ---
+# --- CACHED DATA FUNCTION (Updated) ---
 @st.cache_data
 def get_data(ticker, period):
-    data = yf.download(ticker, period=period, progress=False)
-    return data['Adj Close']
+    # multi_level_index=False forces the columns to be simple (e.g., 'Close') instead of complex
+    data = yf.download(ticker, period=period, progress=False, multi_level_index=False)
+    
+    # Error handling: Check if the dataframe is empty
+    if data.empty:
+        raise ValueError(f"No data found for {ticker}. The symbol might be delisted or wrong.")
+    
+    # Robust column selection: Use 'Adj Close' if present, otherwise fallback to 'Close'
+    if 'Adj Close' in data.columns:
+        return data['Adj Close']
+    elif 'Close' in data.columns:
+        return data['Close']
+    else:
+        # If neither exists, print what DOES exist so we can debug
+        raise ValueError(f"Price columns missing. Found: {data.columns.tolist()}")
 
 # --- MAIN ANALYTICS ---
 try:
