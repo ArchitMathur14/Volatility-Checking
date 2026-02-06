@@ -1,5 +1,5 @@
 import streamlit as st
-import ytfinance as yf
+import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 from gs_quant.timeseries import volatility, Window
