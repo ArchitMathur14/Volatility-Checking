@@ -83,4 +83,5 @@ try:
         st.dataframe(prices.tail(30))
 
 except Exception as e:
-    st.error(f"Error: Could not fetch data for ticker '{ticker}'. Please check the symbol.")
+    st.error(f"Error: Could not fetch data for ticker '{ticker}'.")
+    st.error(f"Technical Details: {e}")  # <--- This prints the real error
